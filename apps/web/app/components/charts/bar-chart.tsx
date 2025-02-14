@@ -42,13 +42,22 @@ const BarChartComp = ({
           tickLine={false}
           axisLine={false}
           tickMargin={8}
-          tickFormatter={(value) => {
+          tickFormatter={(value: any): string => {
             const formattedValue = formatCurrency(
               value,
               isCurrencySymbol,
               icon
             ).split('.');
-            return formattedValue[0] + formattedValue[1].slice(2);
+            if (formattedValue.length === 0) {
+              return ''; // Return an empty string if formattedValue is empty
+            }
+            if (formattedValue.length === 1) {
+              return formattedValue[0] || ''; // Return the first element or an empty string if it's undefined
+            }
+            // Add a type guard to ensure formattedValue[0] is defined
+            const firstPart = formattedValue[0] || '';
+            const secondPart = formattedValue[1] ? '.' + formattedValue[1].slice(0, 2) : '';
+            return firstPart + secondPart;
           }}
         />
         <ChartTooltip

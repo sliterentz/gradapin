@@ -1,6 +1,6 @@
 import currency from 'currency.js';
 import { z } from 'zod';
-import { getAllCountries } from '../../components/config';
+// import { getAllCountries } from '../../components/config';
 import { toast } from 'sonner';
 import { TResponseData } from '../types/response-data.type';
 import { TCountries } from '../../hooks/use-data';
@@ -29,16 +29,16 @@ const schema = z.array(
   })
 );
 
-export const getLocalCountries = (key: string) => {
-  const COUNTRIES = getAllCountries('en');
-  if (typeof window === 'undefined') return [COUNTRIES[0]];
-  const countries = getLocalStorage(key) as any;
-  if (!countries || countries.length === 0) return [COUNTRIES[0]];
+export const getLocalCountries = (key: string): TCountries[] => {
+  const storedData = localStorage.getItem(key);
+  if (!storedData) return [];
+
   try {
-    const parsed = schema.parse(countries);
-    return parsed;
+    const parsedData = JSON.parse(storedData);
+    return schema.parse(parsedData);
   } catch (error) {
-    return [COUNTRIES[0]];
+    console.error('Error parsing local storage data:', error);
+    return [];
   }
 };
 
@@ -252,6 +252,11 @@ export const getAllCountriesData = async (
   );
 
   return data.map((d, idx) => {
-    return { country: countries[idx].value, data: d };
+    const country = countries[idx];
+    if (country) {
+      return { country: country.value, data: d };
+    }
+    // Handle the case where the country is undefined
+    return { country: 'Unknown', data: d };
   });
 };
