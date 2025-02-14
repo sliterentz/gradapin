@@ -6,6 +6,18 @@
       "dependsOn": ["^build"],
       "outputs": [ "dist/**", ".next/**", "!.next/cache/**"]
     },
+    "api#build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"]
+    },
+    "web#build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "!.next/cache/**"]
+    },
+    "docs#build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "!.next/cache/**"]
+    },
     "lint": {
       "dependsOn": ["^build"]
     },
@@ -16,14 +28,6 @@
       "dependsOn": ["^build"],
       "cache": false,
       "persistent": true
-    },
-    "api#build": {
-      "dependsOn": ["^build"],
-      "outputs": ["dist/**"]
-    },
-    "web#build": {
-      "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**"]
     }
   }
 }
