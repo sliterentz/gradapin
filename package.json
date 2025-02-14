@@ -2,7 +2,7 @@
   "name": "gradapin",
   "private": true,
   "scripts": {
-    "build": "turbo build",
+    "build": "turbo run build --filter=api && turbo run build --filter=web",
     "dev": "turbo dev",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
