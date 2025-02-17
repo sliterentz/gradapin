@@ -4,9 +4,19 @@
   ],
   "tasks": {
     "build": {
+      "env": [
+        "NEXT_PUBLIC_API_URL",
+        "NODE_ENV"
+      ],
       "outputs": [
         ".next/**",
         "!.next/cache/**"
+      ]
+    },
+    "dev": {
+      "env": [
+        "NEXT_PUBLIC_API_URL",
+        "NODE_ENV"
       ]
     }
   }

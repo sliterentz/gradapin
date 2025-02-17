@@ -5,7 +5,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || ['https://gradapin.vercel.app'];
 
-  // Enable CORS for https://gradapin.vercel.app
+  // Enable CORS for Next Web App
   app.enableCors({
     origin: (origin, callback) => {
       if (!origin || allowedOrigins.indexOf(origin) !== -1) {
