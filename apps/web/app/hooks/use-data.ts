@@ -13,13 +13,21 @@ export type TCountries = Record<'value' | 'label', string>;
 export const useData = ({
   countryKey,
   timeRangeKey,
+  initialCountries = [],
 }: {
   countryKey: string;
   timeRangeKey: string;
+  initialCountries?: TCountries[];
 }) => {
-  const [countries, setCountriesState] = useState<TCountries[]>(
-    getLocalCountries(countryKey)
-  );
+  const [countries, setCountriesState] = useState<TCountries[]>(() => {
+    const storedCountries = getLocalCountries(countryKey);
+    if (storedCountries.length === 0 && initialCountries.length > 0) {
+      setLocalStorage(countryKey, initialCountries);
+      return initialCountries;
+    }
+    return storedCountries;
+  });
+
   const [timeRange, setTimeRangeState] = useState<TTimeRange>(
     getLocalTimeRange(timeRangeKey)
   );

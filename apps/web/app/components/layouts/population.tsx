@@ -4,6 +4,7 @@ import MainChartComp from '../../components/charts';
 import { useCountryData } from '../../hooks';
 import useCountryLanguage from '../../hooks/use-country-language';
 import { useLocale, useTranslations } from 'next-intl';
+import { useEffect } from 'react';
 
 const Population = () => {
   const {
@@ -22,11 +23,18 @@ const Population = () => {
     indicator: 'SP.POP.TOTL',
     countryKey: 'populationCountries',
     timeRangeKey: 'populationTimeRange',
+    initialCountries: [{ label: "Indonesia", value: "IDN" }],
   });
 
   const t = useTranslations('Chart');
   const lang = useLocale();
   useCountryLanguage({ countries, setMultipleCountries, lang });
+
+  useEffect(() => {
+    if (countries.length === 0) {
+      setCountries({ label: "Indonesia", value: "IDN" });
+    }
+  }, []);
 
   return (
     <MainChartComp

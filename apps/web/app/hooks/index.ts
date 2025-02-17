@@ -1,6 +1,6 @@
 import { getData } from '../libs/types';
 import { useMemo, useState } from 'react';
-import { useData } from './use-data';
+import { useData, TCountries } from './use-data';
 import {
   formatChartData,
   getAllCountriesData,
@@ -19,7 +19,8 @@ export const useCountryData = ({
   indicator,
   countryKey,
   timeRangeKey,
-}: TCountryData) => {
+  initialCountries = [],
+}: TCountryData & { initialCountries?: TCountries[] }) => {
   const {
     countries,
     timeRange,
@@ -31,6 +32,7 @@ export const useCountryData = ({
   } = useData({
     countryKey,
     timeRangeKey,
+    initialCountries,
   });
   const queryClient = useQueryClient();
   const [isNewCountryLoading, setIsNewCountryLoading] = useState(false);
