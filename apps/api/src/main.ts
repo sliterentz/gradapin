@@ -3,13 +3,21 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'];
+
   // Enable CORS for http://localhost:3000
   app.enableCors({
-    origin: 'http://localhost:3000',
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
   
-  await app.listen(process.env.PORT ?? 5000);
+  await app.listen(process.env.PORT || 5000);
 }
 bootstrap();
