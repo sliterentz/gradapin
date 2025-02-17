@@ -6,7 +6,8 @@ const generateUrl = (
   from: number,
   to: number
 ) => {
-  return `http://localhost:5000/api/v1/country/${countryCode}/indicator/${indicator}?date=${from}:${to}`;
+  const apiUrl = process.env.NEST_PUBLIC_API_URL || 'https://gradapin-api.vercel.app';
+  return apiUrl+`/api/v1/country/${countryCode}/indicator/${indicator}?date=${from}:${to}`;
 };
 
 export const getData = async ({
