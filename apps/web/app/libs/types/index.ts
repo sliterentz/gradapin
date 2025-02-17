@@ -13,7 +13,7 @@ const generateUrl = (
 export const getData = async ({
   countryCode = 'USA',
   from = 2010,
-  to = 2023,
+  to = 2025,
   indicator = 'NY.GDP.MKTP.CD',
 }: {
   countryCode: string;

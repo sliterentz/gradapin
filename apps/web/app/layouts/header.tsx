@@ -1,7 +1,7 @@
 import { MainLogo } from '../assets/logo';
 import Link from 'next/link';
 import React from 'react';
-import { Button } from '../components/ui/button';
+import { Button } from '@radix-ui/themes';
 import { Github } from 'lucide-react';
 import Languages from '../languages';
 import { cookies } from 'next/headers';
@@ -10,14 +10,32 @@ import ThemeSwitcher from './themes';
 const Header = async () => {
   const Cookies = await cookies();
   const lang = Cookies.get('lang');
+  const tabIndex = true ? undefined : -1;
   return (
-    <header className="sticky left-3 top-4 z-99 mb-6 w-[95%] rounded-[2rem] border px-4 py-2 pr-2 shadow-2xl backdrop-blur-sm dark:bg-[#111111]/60 md:w-[500px] md:px-6 md:pr-2">
+    <header className="sticky left-3 top-4 z-99 mb-6 w-[98%] rounded-[2rem] border px-4 py-2 pr-2 shadow-2xl backdrop-blur-sm dark:bg-[#111111]/60">
       <nav className="flex items-center justify-between">
-        <Link href="/" aria-label="Home">
-          <MainLogo />
-        </Link>
+        <div className="size-14 flex-none">
+          <Link href="/" aria-label="Home">
+            <MainLogo />
+          </Link>
+        </div>
 
-        <div className="flex items-center gap-4">
+        {/* <div className="flex-grow flex items-center justify-center">
+							<TextField.Root
+								color="gray"
+								radius="full"
+								variant="soft"
+								style={{ width: '100%', maxWidth: '400px' }}
+								tabIndex={tabIndex}
+								placeholder="Search"
+							>
+								<TextField.Slot>
+									<ZoomInIcon />
+								</TextField.Slot>
+							</TextField.Root>
+				</div> */}
+
+        <div className="flex items-center space-x-4">
           <Link
             href="https://github.com/sliterentz/gradapin"
             aria-label="Github"
@@ -25,16 +43,16 @@ const Header = async () => {
             rel="noopener noreferrer"
           >
             <Button
-              size="icon"
-              className="w-full bg-transparent text-foreground hover:bg-transparent hover:opacity-80"
+              color="indigo"
+              radius="full"
+              size="3"
+              variant="ghost"
+              className="w-full bg-transparent text-foreground"
             >
               <Github />
             </Button>
           </Link>
           <Languages lang={lang?.value || 'en'} />
-        </div>
-
-        <div className="flex items-center gap-4">
           <ThemeSwitcher />
         </div>
       </nav>

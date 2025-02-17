@@ -1,9 +1,8 @@
 import currency from 'currency.js';
 import { z } from 'zod';
-// import { getAllCountries } from '../../components/config';
 import { toast } from 'sonner';
 import { TResponseData } from '../types/response-data.type';
-import { TCountries } from '../../hooks/use-data';
+// import { TCountries } from '../../hooks/use-data';
 import { getData } from '../types';
 
 type TColor = string[];
@@ -29,21 +28,31 @@ const schema = z.array(
   })
 );
 
-export const getLocalCountries = (key: string): TCountries[] => {
-  const storedData = localStorage.getItem(key);
-  if (!storedData) return [];
+export type TCountries = z.infer<typeof schema>[number];
 
-  try {
-    const parsedData = JSON.parse(storedData);
-    return schema.parse(parsedData);
-  } catch (error) {
-    console.error('Error parsing local storage data:', error);
+// Non-React utility function to get countries from localStorage
+export const getLocalCountries = (key: string): TCountries[] => {
+  if (typeof window === 'undefined') {
     return [];
   }
+
+  const storedData = localStorage.getItem(key);
+  if (storedData) {
+    try {
+      const parsedData = JSON.parse(storedData);
+      return schema.parse(parsedData);
+    } catch (error) {
+      console.error('Error parsing local storage data:', error);
+      return [];
+    }
+  }
+  return [];
 };
 
 export const setLocalStorage = (key: string, data: any) => {
-  localStorage.setItem(key, JSON.stringify(data));
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(key, JSON.stringify(data));
+  }
 };
 
 const schemaTimeRange = z.object({
@@ -146,47 +155,6 @@ export const commonMetaData = ({
       ...keywords,
     ],
   };
-};
-
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-type TTheme = {
-  [key: string]: string;
-};
-
-export type TShareLink = {
-  countries: string[];
-  to: number;
-  from: number;
-  indicator: string;
-  chartType: string;
-  icon?: string;
-  isCurrencySymbol: boolean;
-  language: string;
-  type: string;
-};
-
-export const createShareLink = (data: TShareLink) => {
-  const {
-    countries,
-    to,
-    from,
-    indicator,
-    chartType,
-    icon,
-    isCurrencySymbol,
-    language,
-    type,
-  } = data;
-
-  const baseUrl =
-    process.env.NODE_ENV === 'development'
-      ? 'http://localhost:3000'
-      : 'https://rifcloud.vercel.app';
-
-  const isIcon = icon ? icon : '';
-  const countriesStr = countries.join('-');
-  return `${baseUrl}/share?countries=${countriesStr}&from=${from}&to=${to}&indicator=${indicator}&chartType=${chartType}&icon=${isIcon}&isCurrencySymbol=${isCurrencySymbol}&language=${language}&type=${type}`;
 };
 
 export const handleGlobalError = (error: unknown) => {

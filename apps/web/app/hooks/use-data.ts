@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useLocalCountries } from './useLocalCountries';
 import {
-  getLocalCountries,
   getLocalTimeRange,
   setLocalStorage,
   TTimeRange,
@@ -19,8 +19,9 @@ export const useData = ({
   timeRangeKey: string;
   initialCountries?: TCountries[];
 }) => {
+  const storedCountries = useLocalCountries(countryKey);
+
   const [countries, setCountriesState] = useState<TCountries[]>(() => {
-    const storedCountries = getLocalCountries(countryKey);
     if (storedCountries.length === 0 && initialCountries.length > 0) {
       setLocalStorage(countryKey, initialCountries);
       return initialCountries;
@@ -28,6 +29,15 @@ export const useData = ({
     return storedCountries;
   });
 
+  useEffect(() => {
+    if (storedCountries.length === 0 && initialCountries.length > 0) {
+      setLocalStorage(countryKey, initialCountries);
+      setCountriesState(initialCountries);
+    } else if (storedCountries.length > 0) {
+      setCountriesState(storedCountries);
+    }
+  }, [storedCountries, initialCountries, countryKey]);
+  
   const [timeRange, setTimeRangeState] = useState<TTimeRange>(
     getLocalTimeRange(timeRangeKey)
   );
