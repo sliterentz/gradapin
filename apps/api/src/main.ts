@@ -1,10 +1,41 @@
+import 'dotenv/config';
+import { VersioningType } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { AllConfigType } from './config/config.type';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService<AllConfigType>);
+
+  app.enableShutdownHooks();
+  app.setGlobalPrefix(
+    configService.getOrThrow('app.apiPrefix', { infer: true }),
+    {
+      exclude: ['/'],
+    },
+  );
+  app.enableVersioning({
+    type: VersioningType.URI,
+  });
+  
   const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || ['https://gradapin.vercel.app'];
 
+    // Set up Swagger if you're using it
+    const config = new DocumentBuilder()
+    .setTitle('Gradapin API')
+    .setDescription('Gradapin API Docs')
+    .setVersion('1.0')
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('docs', app, document);
+
+
+  // Call the setupApp method to set global prefix and enable versioning
+  // AppModule.setupApp(app);
+  
   // Enable CORS for Next Web App
   app.enableCors({
     origin: (origin, callback) => {
@@ -18,6 +49,7 @@ async function bootstrap() {
     credentials: true,
   });
   
-  await app.listen(process.env.PORT || 5000);
+  await app.listen(configService.getOrThrow('app.port', { infer: true }));
 }
+
 bootstrap();

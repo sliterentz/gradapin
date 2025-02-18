@@ -1,14 +1,9 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { PopulationService } from './population.service';
 
-@Controller('api/v1/')
+@Controller('population')
 export class PopulationController {
     constructor(private readonly populationService: PopulationService) {}
-    
-    @Get('country')
-    getCountries(@Query('search') search?: string) {
-        return this.populationService.getCountries(search);
-    }
 
     @Get('country/:countryCode/indicator/:indicator')
     getPopulationData(
@@ -21,6 +16,6 @@ export class PopulationController {
         if (!from || !to) {
             throw new Error('Invalid date range. Please provide a date range in the format "YYYY:YYYY"');
         }
-        return this.populationService.getPopulationData(countryCode, indicator, from, to);
+        return this.populationService.getPopulationData('country', countryCode, indicator, from, to);
     }
 }
