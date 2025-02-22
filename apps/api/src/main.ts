@@ -31,10 +31,6 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
-
-
-  // Call the setupApp method to set global prefix and enable versioning
-  // AppModule.setupApp(app);
   
   // Enable CORS for Next Web App
   app.enableCors({

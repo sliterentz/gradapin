@@ -4,11 +4,7 @@ import { ApiClient } from "./interfaces/api-client.interface";
 import { WorldBankApiService } from './clients/word-bank-api.service'
 // import { BPSApiClient } from './interfaces/bpsapi-client.interface';
 import { BpsApiService } from './clients/bps-api.service';
-
-export enum ApiSource {
-    WORLD_BANK = 'WORLD_BANK',
-    BPS = 'BPS',
-}
+import { ApiSource } from './types/datasource.type';
 
 @Injectable()
 export class ApiDatasourceService {

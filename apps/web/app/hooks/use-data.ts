@@ -13,10 +13,12 @@ export type TCountries = Record<'value' | 'label', string>;
 export const useData = ({
   countryKey,
   timeRangeKey,
+  dataSourceKey,
   initialCountries = [],
 }: {
   countryKey: string;
   timeRangeKey: string;
+  dataSourceKey: string;
   initialCountries?: TCountries[];
 }) => {
   const storedCountries = useLocalCountries(countryKey);

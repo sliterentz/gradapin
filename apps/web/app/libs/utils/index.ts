@@ -1,7 +1,7 @@
 import currency from 'currency.js';
 import { z } from 'zod';
 import { toast } from 'sonner';
-import { TResponseData } from '../types/response-data.type';
+import { TResponseData, TBPSResponseData } from '../types/response-data.type';
 // import { TCountries } from '../../hooks/use-data';
 import { getData } from '../types';
 
@@ -173,24 +173,69 @@ export const handleGlobalError = (error: unknown) => {
   return toast.error(errorMessage);
 };
 
+export const formatBPSChartData = (
+  rawData: TBPSResponseData,
+  countryCode: string
+) => {
+  // Create an array of years from the 'tahun' property
+  const years = rawData.tahun
+  .map(year => year.label.toString())
+  .sort((a, b) => parseInt(b) - parseInt(a));
+
+  // Create a map of year to value from datacontent
+  const dataMap = new Map(
+    years.map((year, index) => {
+      const key = Object.keys(rawData.datacontent)[index];
+      const value = rawData.datacontent[key];
+      return [year, value];
+    })
+  );
+
+  // Map the datacontent into an array format
+  // const dataArray = Object.entries(rawData.datacontent).map(([key, value]) => {
+  //   const year = key.split('_').pop() || '';
+  //   console.log(year, value);
+  //   return { year, value };
+  // });
+
+  // Sort the dataArray by year to ensure correct order
+  // dataArray.sort((a, b) => parseInt(a.year) - parseInt(b.year));
+
+  // Create the final formatted data
+  return years.map(year => {
+    // const dataPoint = dataArray.find(item => item.year === year);
+    return {
+      year: year,
+      [countryCode]: dataMap.has(year) ? Number(dataMap.get(year)) : null,
+    };
+  });
+}
+
 export const formatChartData = (
   rawData:
     | {
         country: any;
-        data: TResponseData[];
+        data: TResponseData[] | TBPSResponseData;
       }[]
     | undefined
 ) => {
+
   const modifyData = rawData?.map((d) => {
-    return d.data.map((dd) => ({
-      year: dd.date,
-      [dd.countryiso3code]: Number(dd.value),
-    }));
+    if (Array.isArray(d.data)) {
+      // Handle TResponseData[]
+      return d.data.map((dd) => ({
+        year: dd.date,
+        [dd.countryiso3code]: Number(dd.value),
+      }));
+    } else {
+      // Handle TBPSResponseData
+      return formatBPSChartData(d.data, d.country);
+    }
   });
 
-  const data = [] as any[];
+  const data: { [key: string]: any }[] = [];
   modifyData?.forEach((group) => {
-    group.forEach((item) => {
+    group.forEach((item: { year: string; [key: string]: any }) => {
       const existingItem = data.find((res) => res.year === item.year);
       if (existingItem) {
         Object.assign(existingItem, item);
@@ -206,8 +251,10 @@ export const getAllCountriesData = async (
   countries: TCountries[],
   from: number,
   to: number,
-  indicator: string
+  indicator: string,
+  dataSource: string,
 ) => {
+  const dataSourceKey = dataSource === 'BPS API Data' ? 'BPS API Data' : 'World Bank API Data';
   const data = await Promise.all(
     countries.map(async (country) => {
       return await getData({
@@ -215,6 +262,7 @@ export const getAllCountriesData = async (
         from: from,
         to: to,
         indicator: indicator,
+        dataSourceKey: dataSourceKey,
       });
     })
   );
