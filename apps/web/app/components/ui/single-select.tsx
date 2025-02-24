@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { useDataSource } from '../../contexts/DataSourceContext';
 
 interface SingleSelectProps {
   selectedCountry: string;
@@ -19,6 +20,7 @@ const SingleSelect: React.FC<SingleSelectProps> = ({ selectedCountry, onCountryC
     const [availableCountries, setAvailableCountries] = useState<Country[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const { dataSource } = useDataSource();
 
     useEffect(() => {
         const fetchCountries = async () => {
@@ -46,12 +48,16 @@ const SingleSelect: React.FC<SingleSelectProps> = ({ selectedCountry, onCountryC
       }, []);
 
     useEffect(() => {
-        if (selectedCountry) {
-            setAvailableCountries(allCountries.filter(country => country.iso3 !== selectedCountry));
+        if (dataSource === 'BPS API Data') {
+            onCountryChange('IDN');
         } else {
-            setAvailableCountries(allCountries);
+            if (selectedCountry) {
+                setAvailableCountries(allCountries.filter(country => country.iso3 !== selectedCountry));
+            } else {
+                setAvailableCountries(allCountries);
+            }
         }
-    }, [selectedCountry, allCountries]);
+    }, [selectedCountry, allCountries, dataSource, onCountryChange]);
 
     const handleCountryChange = (value: string) => {
         onCountryChange(value);
@@ -61,7 +67,7 @@ const SingleSelect: React.FC<SingleSelectProps> = ({ selectedCountry, onCountryC
     if (error) return <div>{error}</div>;
 
     return (
-        <Select value={selectedCountry} onValueChange={onCountryChange}>
+        <Select value={selectedCountry} onValueChange={handleCountryChange} disabled={dataSource === 'BPS API Data'}>
             <SelectTrigger>
                 <SelectValue placeholder="Select a country" />
             </SelectTrigger>

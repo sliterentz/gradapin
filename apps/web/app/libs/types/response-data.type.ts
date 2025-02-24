@@ -13,5 +13,14 @@ export type TResponseData = {
     unit: string;
     obs_status: string;
     decimal: number;
-  };
-  
+};
+
+export type TBPSResponseData = {
+  tahun: Array<{
+    val: number;
+    label: string;
+  }>;
+  datacontent: {
+    [key: string]: number;
+  }
+}

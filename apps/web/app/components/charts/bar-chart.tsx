@@ -47,7 +47,7 @@ const BarChartComp = ({
               value,
               isCurrencySymbol,
               icon
-            ).split('.');
+            ).split(',');
             if (formattedValue.length === 0) {
               return ''; // Return an empty string if formattedValue is empty
             }

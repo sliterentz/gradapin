@@ -5,8 +5,10 @@ import { useCountryData } from '../../hooks';
 import useCountryLanguage from '../../hooks/use-country-language';
 import { useLocale, useTranslations } from 'next-intl';
 import { useEffect } from 'react';
+import { useDataSource } from '../../contexts/DataSourceContext';
 
 const Population = () => {
+  const { dataSource } = useDataSource();
   const {
     isLoading,
     chartData,
@@ -20,10 +22,11 @@ const Population = () => {
     fetchSingleCountryData,
     isFetching,
   } = useCountryData({
-    indicator: 'SP.POP.TOTL',
-    countryKey: 'populationCountries',
+    indicator: dataSource === 'BPS API Data' ? 'SP.POP.TOTL.BPS' : 'SP.POP.TOTL',
+    countryKey: dataSource === 'BPS API Data' ? 'bpsPopulationCountries' : 'populationCountries',
     timeRangeKey: 'populationTimeRange',
-    initialCountries: [{ label: "Indonesia", value: "IDN" }],
+    initialCountries: [{ label: "Indonesia", value: dataSource === 'BPS API Data' ? "BPS_IDN" : "IDN" }],
+    dataSourceKey: dataSource,
   });
 
   const t = useTranslations('Chart');
@@ -31,10 +34,9 @@ const Population = () => {
   useCountryLanguage({ countries, setMultipleCountries, lang });
 
   useEffect(() => {
-    if (countries.length === 0) {
-      setCountries({ label: "Indonesia", value: "IDN" });
-    }
-  }, []);
+    // Reset countries when data source changes to reset the selected country to Indonesia if it's not already selected
+    setCountries({ label: "Indonesia", value: dataSource === 'BPS API Data' ? "BPS_IDN" : "IDN" });
+  }, [dataSource, setCountries]);
 
   return (
     <MainChartComp
@@ -51,7 +53,7 @@ const Population = () => {
       removeCountry={removeCountry}
       removeLastCountry={removeLastCountry}
       isCurrencySymbol={false}
-      indicator="SP.POP.TOTL"
+      indicator={dataSource === 'BPS API Data' ? 'SP.POP.TOTL.BPS' : 'SP.POP.TOTL'}
       type="population"
     />
   );
