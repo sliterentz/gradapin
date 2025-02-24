@@ -9,7 +9,7 @@ const generateUrl = (
   to: number,
   dataSource: string
 ) => {
-  const apiUrl = process.env.NEST_PUBLIC_API_URL || 'http://localhost:5000';
+  const apiUrl = process.env.NEST_PUBLIC_API_URL || 'https://gradapin-api.vercel.app';
   
   if (dataSource === 'World Bank API Data') {
     return `${apiUrl}/api/v1/population/country/${countryCode}/indicator/${indicator}?date=${from}:${to}`;
