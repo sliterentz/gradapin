@@ -178,35 +178,35 @@ export const formatBPSChartData = (
   countryCode: string
 ) => {
   // Create an array of years from the 'tahun' property
-  const years = rawData.tahun
-  .map(year => year.label.toString())
-  .sort((a, b) => parseInt(b) - parseInt(a));
+  const yearMap = new Map(rawData.tahun.map(year => [year.val, year.label]));
+  const yearsLabel = rawData.tahun.map(year => year.label.toString());
 
   // Create a map of year to value from datacontent
   const dataMap = new Map(
-    years.map((year, index) => {
-      const key = Object.keys(rawData.datacontent)[index];
-      const value = rawData.datacontent[key];
-      return [year, value];
+    Object.entries(rawData.datacontent).map(([key, value]) => {
+      const yearVal = parseInt(key.slice(-4, -1));
+      // const key = Object.keys(rawData.datacontent)[index];
+      // const value = rawData.datacontent[key];
+      const yearLabel = yearMap.get(yearVal);
+      if (!yearLabel) {
+        console.warn(`No matching label found for year value: ${yearVal}`);
+        return [key, parseInt(value)]; // fallback to original key if no match
+      }
+      return [yearLabel, parseInt(value)];
     })
   );
 
-  // Map the datacontent into an array format
-  // const dataArray = Object.entries(rawData.datacontent).map(([key, value]) => {
-  //   const year = key.split('_').pop() || '';
-  //   console.log(year, value);
-  //   return { year, value };
-  // });
+  // Map and sort the dataMap by year to ensure correct order into an array format
+  const dataArray = Array.from(dataMap)
+  .sort((a, b) => parseInt(b[0]) - parseInt(a[0]));
 
-  // Sort the dataArray by year to ensure correct order
-  // dataArray.sort((a, b) => parseInt(a.year) - parseInt(b.year));
+  const years = Array.from(dataArray);
 
   // Create the final formatted data
-  return years.map(year => {
-    // const dataPoint = dataArray.find(item => item.year === year);
+  return years.map(([year, value]) => {
     return {
       year: year,
-      [countryCode]: dataMap.has(year) ? Number(dataMap.get(year)) : null,
+      [countryCode]: Number(value),
     };
   });
 }
@@ -219,32 +219,44 @@ export const formatChartData = (
       }[]
     | undefined
 ) => {
+  if (!rawData) return [];
 
-  const modifyData = rawData?.map((d) => {
-    if (Array.isArray(d.data)) {
+  const yearDataMap = new Map<string, { [key: string]: number }>();
+
+  rawData.forEach((countryData) => {
+    if (Array.isArray(countryData.data)) {
       // Handle TResponseData[]
-      return d.data.map((dd) => ({
-        year: dd.date,
-        [dd.countryiso3code]: Number(dd.value),
-      }));
+      countryData.data.forEach((dd) => {
+        const year = dd.date;
+        if (!yearDataMap.has(year)) {
+          yearDataMap.set(year, { year });
+        }
+        yearDataMap.get(year)![dd.countryiso3code] = Number(dd.value);
+      });
     } else {
       // Handle TBPSResponseData
-      return formatBPSChartData(d.data, d.country);
+      const formattedData = formatBPSChartData(countryData.data, countryData.country);
+      formattedData.forEach((item) => {
+        const year = item.year;
+        if (!yearDataMap.has(year)) {
+          yearDataMap.set(year, { year });
+        }
+        Object.entries(item).forEach(([key, value]) => {
+          if (key !== 'IDN' && key !== 'year') {
+            yearDataMap.get(year)![key] = Number(value);
+          }
+        });
+      });
     }
   });
 
-  const data: { [key: string]: any }[] = [];
-  modifyData?.forEach((group) => {
-    group.forEach((item: { year: string; [key: string]: any }) => {
-      const existingItem = data.find((res) => res.year === item.year);
-      if (existingItem) {
-        Object.assign(existingItem, item);
-      } else {
-        data.push({ ...item });
-      }
-    });
-  });
-  return data;
+  // Convert the Map to an array and sort by year
+  const sortedData = Array.from(yearDataMap.values()).sort((a, b) => 
+    parseInt(b.year as string) - parseInt(a.year as string)
+  );
+
+  console.log('Sorted data:', sortedData);
+  return sortedData;
 };
 
 export const getAllCountriesData = async (
