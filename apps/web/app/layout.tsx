@@ -12,6 +12,7 @@ import { Toaster } from 'sonner';
 import ToastProvider from './libs/providers/toast-provider';
 import ReactQueryProvider from './libs/providers/reactQuery-provider';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
+import { DataSourceProvider } from './contexts/DataSourceContext';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -40,6 +41,7 @@ const RootLayout = async ({
             disableTransitionOnChange
           >
             <ReactQueryProvider>
+              <DataSourceProvider>
               <NextTopLoader
                 color="#22dd4e"
                 initialPosition={0.08}
@@ -57,6 +59,7 @@ const RootLayout = async ({
                   <ToastProvider />
                   <Footer />
                 </div>
+              </DataSourceProvider>
             </ReactQueryProvider>
           </ThemeProvider>
         </NextIntlClientProvider>

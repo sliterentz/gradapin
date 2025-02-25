@@ -1,7 +1,7 @@
 import currency from 'currency.js';
 import { z } from 'zod';
 import { toast } from 'sonner';
-import { TResponseData } from '../types/response-data.type';
+import { TResponseData, TBPSResponseData } from '../types/response-data.type';
 // import { TCountries } from '../../hooks/use-data';
 import { getData } from '../types';
 
@@ -173,41 +173,100 @@ export const handleGlobalError = (error: unknown) => {
   return toast.error(errorMessage);
 };
 
+export const formatBPSChartData = (
+  rawData: TBPSResponseData,
+  countryCode: string
+) => {
+  // Create an array of years from the 'tahun' property
+  const yearMap = new Map(rawData.tahun.map(year => [year.val, year.label]));
+  const yearsLabel = rawData.tahun.map(year => year.label.toString());
+
+  // Create a map of year to value from datacontent
+  const dataMap = new Map(
+    Object.entries(rawData.datacontent).map(([key, value]) => {
+      const yearVal = parseInt(key.slice(-4, -1));
+      // const key = Object.keys(rawData.datacontent)[index];
+      // const value = rawData.datacontent[key];
+      const yearLabel = yearMap.get(yearVal);
+      if (!yearLabel) {
+        console.warn(`No matching label found for year value: ${yearVal}`);
+        return [key, parseInt(value)]; // fallback to original key if no match
+      }
+      return [yearLabel, parseInt(value)];
+    })
+  );
+
+  // Map and sort the dataMap by year to ensure correct order into an array format
+  const dataArray = Array.from(dataMap)
+  .sort((a, b) => parseInt(b[0]) - parseInt(a[0]));
+
+  const years = Array.from(dataArray);
+
+  // Create the final formatted data
+  return years.map(([year, value]) => {
+    return {
+      year: year,
+      [countryCode]: Number(value),
+    };
+  });
+}
+
 export const formatChartData = (
   rawData:
     | {
         country: any;
-        data: TResponseData[];
+        data: TResponseData[] | TBPSResponseData;
       }[]
     | undefined
 ) => {
-  const modifyData = rawData?.map((d) => {
-    return d.data.map((dd) => ({
-      year: dd.date,
-      [dd.countryiso3code]: Number(dd.value),
-    }));
+  if (!rawData) return [];
+
+  const yearDataMap = new Map<string, { [key: string]: number }>();
+
+  rawData.forEach((countryData) => {
+    if (Array.isArray(countryData.data)) {
+      // Handle TResponseData[]
+      countryData.data.forEach((dd) => {
+        const year = dd.date;
+        if (!yearDataMap.has(year)) {
+          yearDataMap.set(year, { year });
+        }
+        yearDataMap.get(year)![dd.countryiso3code] = Number(dd.value);
+      });
+    } else {
+      // Handle TBPSResponseData
+      const formattedData = formatBPSChartData(countryData.data, countryData.country);
+      formattedData.forEach((item) => {
+        const year = item.year;
+        if (!yearDataMap.has(year)) {
+          yearDataMap.set(year, { year });
+        }
+        Object.entries(item).forEach(([key, value]) => {
+          if (key !== 'IDN' && key !== 'year') {
+            yearDataMap.get(year)![key] = Number(value);
+          }
+        });
+      });
+    }
   });
 
-  const data = [] as any[];
-  modifyData?.forEach((group) => {
-    group.forEach((item) => {
-      const existingItem = data.find((res) => res.year === item.year);
-      if (existingItem) {
-        Object.assign(existingItem, item);
-      } else {
-        data.push({ ...item });
-      }
-    });
-  });
-  return data;
+  // Convert the Map to an array and sort by year
+  const sortedData = Array.from(yearDataMap.values()).sort((a, b) => 
+    parseInt(b.year as string) - parseInt(a.year as string)
+  );
+
+  console.log('Sorted data:', sortedData);
+  return sortedData;
 };
 
 export const getAllCountriesData = async (
   countries: TCountries[],
   from: number,
   to: number,
-  indicator: string
+  indicator: string,
+  dataSource: string,
 ) => {
+  const dataSourceKey = dataSource === 'BPS API Data' ? 'BPS API Data' : 'World Bank API Data';
   const data = await Promise.all(
     countries.map(async (country) => {
       return await getData({
@@ -215,6 +274,7 @@ export const getAllCountriesData = async (
         from: from,
         to: to,
         indicator: indicator,
+        dataSourceKey: dataSourceKey,
       });
     })
   );
