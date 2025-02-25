@@ -1,0 +1,12 @@
+{
+  "name": "@libs/api-datasource",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/core": "^11.0.0",
+    "@nestjs/config": "^2.3.1",
+    "@nestjs/axios": "^4.0.0",
+    "rxjs": "^7.8.1",
+    "axios": "^1.7.9"
+  }
+}
