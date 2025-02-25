@@ -1,11 +1,5 @@
 {
     "version": 2,
-    "builds": [
-        {
-            "src": "src/main.ts",
-            "use": "@vercel/node"
-        }
-    ],
     "routes": [
         {
             "src": "/(.*)",
@@ -20,5 +14,8 @@
         "env": {
             "NODE_ENV": "production"
         }
-    }
+    },
+    "installCommand": "pnpm install",
+    "buildCommand": "pnpm build",
+    "outputDirectory": "dist"
 }
