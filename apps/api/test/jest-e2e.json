@@ -11,7 +11,9 @@
     "^.+\\.(t|j)s$": "ts-jest"
   },
   "moduleNameMapper": {
+    "@libs/api-datasource": "<rootDir>/../libs/api-datasource/src",
     "@libs/api-datasource/(.*)": "<rootDir>/../libs/api-datasource/src/$1",
-    "@libs/api-datasource": "<rootDir>/../libs/api-datasource/src"
+    "@libs/rate-limit": "<rootDir>/../libs/rate-limit/src",
+    "@libs/rate-limit/(.*)": "<rootDir>/../libs/rate-limit/src/$1"
   }
 }

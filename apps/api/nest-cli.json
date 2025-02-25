@@ -15,6 +15,15 @@
       "compilerOptions": {
         "tsConfigPath": "libs/api-datasource/tsconfig.lib.json"
       }
+    },
+    "rate-limit": {
+      "type": "library",
+      "root": "libs/rate-limit",
+      "entryFile": "index",
+      "sourceRoot": "libs/rate-limit/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/rate-limit/tsconfig.lib.json"
+      }
     }
   }
 }

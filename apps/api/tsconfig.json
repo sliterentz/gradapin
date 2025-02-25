@@ -24,9 +24,12 @@
       "@libs/api-datasource/*": [
         "libs/api-datasource/src/*"
       ],
-      "@repo/rate-limit/*": [
-        "../../packages/rate-limit/*"
-      ]
+      "@libs/rate-limit": [
+        "libs/rate-limit/src"
+      ],
+      "@libs/rate-limit/*": [
+        "libs/rate-limit/src/*"
+      ],
     }
   }
 }

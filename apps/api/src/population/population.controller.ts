@@ -1,6 +1,7 @@
 import { Controller, Get, Param, Query, Version, UseGuards } from '@nestjs/common';
 import { PopulationService } from './population.service';
-import { RateLimitGuard } from '../guards/rate-limit.guard';
+import { Throttle } from '@nestjs/throttler';
+import { RateLimitGuard } from '../../libs/rate-limit/src/guards/rate-limit.guard';
 
 @Controller('population')
 export class PopulationController {
@@ -9,6 +10,7 @@ export class PopulationController {
     @Version('1')
     @Get('country/:countryCode/indicator/:indicator')
     @UseGuards(RateLimitGuard)
+    @Throttle({ default: { limit: 4, ttl: 3600} })
     getPopulationData(
         @Param('countryCode') countryCode: string,
         @Param('indicator') indicator: string,
@@ -25,6 +27,7 @@ export class PopulationController {
     @Version('1')
     @Get('variable/:var')
     @UseGuards(RateLimitGuard)
+    @Throttle({ default: { limit: 4, ttl: 3600} })
     getBPSPopulationData(
         @Param('var') variableCode: string,
         // @Query('format') format: string = 'json'
