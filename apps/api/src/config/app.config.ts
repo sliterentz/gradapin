@@ -24,5 +24,9 @@ export default registerAs<AppConfig>('app', () => {
     fallbackLanguage: process.env.APP_FALLBACK_LANGUAGE || 'en',
     headerLanguage: process.env.APP_HEADER_LANGUAGE || 'x-custom-lang',
     bpsKey: process.env.BPS_KEY,
+    UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
+    UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
+    RATE_LIMIT_WINDOW: parseInt(process.env.RATE_LIMIT_WINDOW || '60', 10),
+    RATE_LIMIT_MAX_REQUESTS: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '60', 10)
   };
 });
