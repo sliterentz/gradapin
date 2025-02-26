@@ -2,6 +2,7 @@
     "HomePage": {
       "title": "Explorar los datos",
       "gdp": "PIB del país",
+      "gdpGrowth": "PIB del país",
       "perCapitaIncome": "Ingreso per cápita del país",
       "lifeExpectancy": "Esperanza de vida del país",
       "population": "Población del país",
@@ -19,6 +20,7 @@
     "Chart": {
       "search": "Seleccionar países",
       "gdp": "PIB de los países",
+      "gdpGrowth": "PIB de los países",
       "gdpDesc": "PIB significa Producto Interno Bruto. Es el valor total de todos los bienes y servicios producidos en un país en un año.",
       "perCapitaIncome": "Ingreso per cápita de los países",
       "perCapitaIncomeDesc": "El ingreso per cápita es el ingreso promedio de los ciudadanos de un país. Se calcula dividiendo el ingreso total del país por su población.",

@@ -2,7 +2,8 @@
     "HomePage": {
       "title": "Explore the Data",
       "gdp": "Country GDP",
-      "perCapitaIncome": "Country per Capita Income",
+      "gdpGrowth": "Country GDP Growth",
+      "perCapitaIncome": "Country GDP per Capita",
       "lifeExpectancy": "Country Life Expectancy",
       "population": "Country Population",
       "unemploymentLaborForce": "Country Unemployment Labour Force",
@@ -19,6 +20,7 @@
     "Chart": {
       "search": "Select Countries",
       "gdp": "GDP of Countries",
+      "gdpGrowth": "Country GDP Growth",
       "gdpDesc": "GDP stands for Gross Domestic Product. It is the total value of all goods and services produced in a country in a year.",
       "perCapitaIncome": "Per Capita Income of Countries",
       "perCapitaIncomeDesc": "Per Capita Income is the average income of a country's citizens. It is calculated by dividing the country's total income by its population.",

@@ -1,14 +1,41 @@
 'use client';
 
 import { CheckIcon } from "lucide-react";
+import { Flex, Grid, TabNav, Separator } from '@radix-ui/themes';
+import { useTranslations } from 'next-intl';
 import { Menubar as RadixMenubar, MenubarContent, MenubarCheckboxItem, MenubarItemIndicator, MenubarMenu, MenubarPortal, MenubarTrigger } from "@radix-ui/react-menubar";
 import { useDataSource } from '../contexts/DataSourceContext';
+import { usePathname } from 'next/navigation';
 
 const Menubar = () => {
-    const menuItems = ["World Bank API Data", "BPS API Data"] as const;
-    const { dataSource, setDataSource } = useDataSource();
+  const t = useTranslations('HomePage');
+  const pathname = usePathname();
+  const isPopulationPage = pathname === '/';
+  const menuItems = isPopulationPage 
+  ? ["World Bank API Data", "BPS API Data"] as const
+  : ["World Bank API Data"] as const;
+  const { dataSource, setDataSource } = useDataSource();
     
     return (
+      <Flex gap="3" direction="column">
+      <Grid columns={{ initial: '1', sm: '2' }} gap="1">
+        {dataSource !== 'BPS API Data' && (
+        <Flex align="center" justify={{ initial: 'start', sm: 'end' }}>
+          <TabNav.Root className="flex flex-wrap items-center gap-2">
+            <TabNav.Link href="/" className="whitespace-nowrap">{t('population')}</TabNav.Link>
+            <Separator orientation="vertical" className="h-4 hidden sm:block" />
+            <TabNav.Link href="/pages/gdpgrowth" className="whitespace-nowrap">{t('gdpGrowth')}</TabNav.Link>
+            <Separator orientation="vertical" className="h-4 hidden sm:block" />
+            <TabNav.Link href="/pages/gdppercapita" className="whitespace-nowrap">
+            <span className="sm:hidden">{t('perCapitaIncome')}</span>
+            <span className="hidden sm:inline">{t('perCapitaIncome')}</span>
+            </TabNav.Link>
+            <Separator orientation="vertical" className="h-4 hidden sm:block" />
+            <TabNav.Link href="/pages/gdp" className="whitespace-nowrap">{t('gdp')}</TabNav.Link>
+          </TabNav.Root>
+        </Flex>
+        )}
+        <Flex align="center" justify={{ initial: 'start', sm: 'end' }}>
         <div className="flex-grow flex items-center justify-center">
         <RadixMenubar className="flex rounded-full bg-white p-[3px] shadow-[0_2px_10px] shadow-blackA4">
         <MenubarMenu>
@@ -42,6 +69,9 @@ const Menubar = () => {
         </MenubarMenu>
         </RadixMenubar>
         </div>
+        </Flex>
+      </Grid>
+      </Flex>
     );
 };
 

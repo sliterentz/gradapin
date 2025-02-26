@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from 'next/font/google';
 import "./globals.css";
 import "@radix-ui/themes/styles.css";
+import { Theme, Box, Container } from '@radix-ui/themes';
 import ThemeProvider from './libs/providers/theme-provider';
 import Header from './layouts/header';
 import Footer from './layouts/footer';
@@ -13,6 +14,7 @@ import ToastProvider from './libs/providers/toast-provider';
 import ReactQueryProvider from './libs/providers/reactQuery-provider';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { DataSourceProvider } from './contexts/DataSourceContext';
+import Menubar from "./layouts/menubar";
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -53,12 +55,15 @@ const RootLayout = async ({
                 speed={200}
                 shadow="0 0 10px #22DD4e,0 0 5px #22DD4e"
               />
-                <div className="grid min-h-[100dvh] grid-rows-[auto_1fr_auto]">
+                <Box className="min-h-[100dvh] flex flex-col">
                   <Header />
+                  <Menubar />
+                  <Container size="4" className="flex-grow">
                   <NuqsAdapter>{children}</NuqsAdapter>
+                  </Container>
                   <ToastProvider />
                   <Footer />
-                </div>
+                </Box>
               </DataSourceProvider>
             </ReactQueryProvider>
           </ThemeProvider>

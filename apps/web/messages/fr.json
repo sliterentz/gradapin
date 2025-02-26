@@ -2,6 +2,7 @@
     "HomePage": {
       "title": "Explorer les données",
       "gdp": "PIB du pays",
+      "gdpGrowth": "PIB du pays",
       "perCapitaIncome": "Revenu par habitant du pays",
       "lifeExpectancy": "Espérance de vie du pays",
       "population": "Population du pays",
@@ -19,6 +20,7 @@
     "Chart": {
       "search": "Sélectionnez les pays",
       "gdp": "PIB des pays",
+      "gdpGrowth": "PIB des pays",
       "gdpDesc": "Le PIB signifie Produit Intérieur Brut. C'est la valeur totale de tous les biens et services produits dans un pays en une année.",
       "perCapitaIncome": "Revenu par habitant des pays",
       "perCapitaIncomeDesc": "Le revenu par habitant est le revenu moyen des citoyens d'un pays. Il est calculé en divisant le revenu total du pays par sa population.",
