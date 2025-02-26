@@ -8,10 +8,9 @@ const Home = () => {
     const t = useTranslations('HomePage');
   return (
     <Flex gap="3" direction="column">
-        <h1 className="mb-3 text-2xl font-bold">{t('title')}</h1>
-        <div className="flex w-full flex-col flex-wrap items-center gap-3 md:flex-row">
-          <Population />
-        </div>
+      <Flex direction="column" gap="3" className="md:flex-row md:flex-wrap items-center">
+        <Population />
+      </Flex>
     </Flex>
   );
 };
