@@ -20,6 +20,7 @@ import { useTheme } from 'next-themes';
 import { TCountries } from '../../hooks/use-data';
 // import { useHotkeys } from 'react-hotkeys-hook';
 import ChartRenderer from './chart-renderer';
+import { Flex } from '@radix-ui/themes';
 
 export type TChart = 'area' | 'bar' | 'line' | 'radar';
 
@@ -95,9 +96,10 @@ const MainChartComp: React.FC<TMainChart> = ({
       }}
       id="capture-chart"
     >
-      <div className="flex w-full items-start justify-between">
+      <Flex direction="column" gap="3">
+        <Flex justify="between" align="start" wrap="wrap" gap="3">
         <CardHeader className="p-5">
-          <div className="-mb-1 flex items-start gap-4">
+          <Flex direction="column" gap="2">
             <ToolTipComp name={toolTipMessage}>
               <CardTitle className="flex items-center gap-1 text-xl md:text-2xl">
                 {title}
@@ -109,7 +111,6 @@ const MainChartComp: React.FC<TMainChart> = ({
                 />
               </CardTitle>
             </ToolTipComp>
-          </div>
 
           <CardDescription
             style={{
@@ -119,7 +120,7 @@ const MainChartComp: React.FC<TMainChart> = ({
             {chartData[0]?.year} - {chartData[chartData.length - 1]?.year}
           </CardDescription>
           {countries.length > 0 && (
-            <div className="flex flex-wrap items-center gap-2 p-5 pt-2 pl-0">
+            <Flex wrap="wrap" gap="2">
               {countries.map((country, idx) => (
                 <span
                   className="mr-2 flex items-center text-sm whitespace-nowrap"
@@ -134,21 +135,20 @@ const MainChartComp: React.FC<TMainChart> = ({
                   />
                 </span>
               ))}
-            </div>
+            </Flex>
           )}
+          </Flex>
         </CardHeader>
 
-        <div className="w-full md:w-[300px] px-5 md:px-0 md:mr-4 mt-4 flex flex-col">
+        <Flex direction="column" gap="2" className="p-5 md:w-[300px]">
         <SingleSelect
           selectedCountry={selectedCountry}
           onCountryChange={handleCountryChange}
         />
           <TimeRange timeRange={timeRange} setTimeRange={setTimeRange} />
-          <div className="mt-2 w-full">
-            <ChartType chartType={chartType} setChartType={setChartType} />
-          </div>
-        </div>
-      </div>
+          <ChartType chartType={chartType} setChartType={setChartType} />
+        </Flex>
+      </Flex>
 
       <CardContent className="h-[500px] w-[97vw] rounded-xl px-0 py-4 md:p-4">
       {chartData.length > 0 ? (
@@ -161,11 +161,12 @@ const MainChartComp: React.FC<TMainChart> = ({
           isCurrencySymbol={isCurrencySymbol}
         />
       ) : (
-        <div className="flex h-full items-center justify-center">
+        <Flex align="center" justify="center" style={{ height: '100%' }}>
           No data available for the selected country and time range.
-        </div>
+        </Flex>
       )}
       </CardContent>
+      </Flex>
       {isLoading && <Loader type="full" />}
       {isFetching && <Loader type="full" isFetching={isFetching} />}
     </Card>

@@ -42,6 +42,7 @@ export const INDICATORS = [
   'BX.KLT.DINV.WD.GD.ZS',
   'FI.RES.TOTL.CD',
   'NY.GDP.MKTP.CD',
+  'NY.GDP.MKTP.KD.ZG',
   'FP.CPI.TOTL.ZG',
   'SP.DYN.LE00.IN',
   'NY.GDP.PCAP.CD',

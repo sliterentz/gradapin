@@ -51,11 +51,12 @@ const SingleSelect: React.FC<SingleSelectProps> = ({ selectedCountry, onCountryC
         if (dataSource === 'BPS API Data') {
             onCountryChange('IDN');
         } else {
-            if (selectedCountry) {
-                setAvailableCountries(allCountries.filter(country => country.iso3 !== selectedCountry));
-            } else {
-                setAvailableCountries(allCountries);
-            }
+          onCountryChange('IDN');
+            // if (selectedCountry) {
+            //     setAvailableCountries(allCountries.filter(country => country.iso3 !== selectedCountry));
+            // } else {
+            //     setAvailableCountries(allCountries);
+            // }
         }
     }, [selectedCountry, allCountries, dataSource, onCountryChange]);
 
@@ -67,7 +68,7 @@ const SingleSelect: React.FC<SingleSelectProps> = ({ selectedCountry, onCountryC
     if (error) return <div>{error}</div>;
 
     return (
-        <Select value={selectedCountry} onValueChange={handleCountryChange} disabled={dataSource === 'BPS API Data'}>
+        <Select value={selectedCountry} onValueChange={handleCountryChange} disabled={true}>
             <SelectTrigger>
                 <SelectValue placeholder="Select a country" />
             </SelectTrigger>
