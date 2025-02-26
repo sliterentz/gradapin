@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ApiDatasourceService } from '@libs/api-datasource';
+import { ApiDatasourceService } from '../../libs/api-datasource/src/api-datasource.service';
 import { AxiosError } from 'axios';
-import { ApiSource } from '@libs/api-datasource/types/datasource.type';
+import { ApiSource } from '../../libs/api-datasource/src/types/datasource.type';
 
 @Injectable()
 export class PopulationService {

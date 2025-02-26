@@ -1,6 +1,7 @@
 {
   "name": "@libs/api-datasource",
   "version": "0.0.1",
+  "description": "API Datasource Library",
   "peerDependencies": {
     "@nestjs/common": "^11.0.0",
     "@nestjs/core": "^11.0.0",

@@ -7,8 +7,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PopulationModule } from './population/population.module';
 import { CountryModule } from './country/country.module';
-import { ApiDatasourceModule } from '@libs/api-datasource';
-import { RateLimitModule, RateLimitService } from '@libs/rate-limit';
+import { ApiDatasourceModule } from '../libs/api-datasource/src/api-datasource.module';
+import { RateLimitModule } from '../libs/rate-limit/src/rate-limit.module';
 
 @Module({
   imports: [
