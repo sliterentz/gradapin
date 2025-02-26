@@ -255,7 +255,6 @@ export const formatChartData = (
     parseInt(b.year as string) - parseInt(a.year as string)
   );
 
-  console.log('Sorted data:', sortedData);
   return sortedData;
 };
 
