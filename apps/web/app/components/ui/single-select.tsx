@@ -26,7 +26,7 @@ const SingleSelect: React.FC<SingleSelectProps> = ({ selectedCountry, onCountryC
         const fetchCountries = async () => {
           try {
             const apiUrl = process.env.NEST_PUBLIC_API_URL || 'https://gradapin-api.vercel.app';
-            const response = await fetch(apiUrl+'/api/v1/country');
+            const response = await fetch(apiUrl+'/api/v1/country/list');
             if (!response.ok) {
               throw new Error('Failed to fetch countries');
             }
