@@ -214,7 +214,7 @@ export const formatBPSChartData = (
 export const formatChartData = (
   rawData:
     | {
-        country: any;
+        country: string;
         data: TResponseData[] | TBPSResponseData;
       }[]
     | undefined
@@ -224,6 +224,7 @@ export const formatChartData = (
   const yearDataMap = new Map<string, { [key: string]: number }>();
 
   rawData.forEach((countryData) => {
+    const countryCode = countryData.country;
     if (Array.isArray(countryData.data)) {
       // Handle TResponseData[]
       countryData.data.forEach((dd) => {
@@ -231,21 +232,17 @@ export const formatChartData = (
         if (!yearDataMap.has(year)) {
           yearDataMap.set(year, { year });
         }
-        yearDataMap.get(year)![dd.countryiso3code] = Number(dd.value);
+        yearDataMap.get(year)![countryCode] = Number(dd.value);
       });
     } else {
-      // Handle TBPSResponseData
-      const formattedData = formatBPSChartData(countryData.data, countryData.country);
+      // Handle BPS API Data (TBPSResponseData)
+      const formattedData = formatBPSChartData(countryData.data, countryCode);
       formattedData.forEach((item) => {
         const year = item.year;
         if (!yearDataMap.has(year)) {
           yearDataMap.set(year, { year });
         }
-        Object.entries(item).forEach(([key, value]) => {
-          if (key !== 'IDN' && key !== 'year') {
-            yearDataMap.get(year)![key] = Number(value);
-          }
-        });
+        yearDataMap.get(year)![countryCode] = Number(item[countryCode]);
       });
     }
   });

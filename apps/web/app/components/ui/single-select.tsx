@@ -43,7 +43,6 @@ const SingleSelect: React.FC<SingleSelectProps> = ({ selectedCountry, onCountryC
             setIsLoading(false);
           }
         };
-    
         fetchCountries();
       }, []);
 

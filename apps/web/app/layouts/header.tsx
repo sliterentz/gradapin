@@ -1,13 +1,11 @@
 import { MainLogo } from '../assets/logo';
 import Link from 'next/link';
 import React from 'react';
-import { IconButton } from '@radix-ui/themes';
-import { Github } from 'lucide-react';
 import Languages from '../languages';
 import { cookies } from 'next/headers';
 import ThemeSwitcher from './themes';
 // import Menubar from './menubar';
-// import SearchBar from './searchbar';
+import SearchBarWrapper from './searchbarwrapper';
 
 const Header = async () => {
   const Cookies = await cookies();
@@ -23,20 +21,11 @@ const Header = async () => {
         </div>
 
         {/* <Menubar /> */}
-        {/* <SearchBar /> */}
+        <SearchBarWrapper lang={lang?.value || 'en'} />
 
-        <div className="flex items-center space-x-4">
-          <Link
-            href="https://github.com/sliterentz/gradapin"
-            aria-label="Github"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <IconButton radius="full" size="3" variant="ghost">
-              <Github width="24" height="24" />
-            </IconButton>
-          </Link>
+        <div className="flex items-center">
           <Languages lang={lang?.value || 'en'} />
+          <div className="mx-2 h-6 w-px bg-gray-300 dark:bg-gray-700" aria-hidden="true" />
           <ThemeSwitcher />
         </div>
       </nav>

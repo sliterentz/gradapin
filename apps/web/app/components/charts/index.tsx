@@ -14,7 +14,7 @@ import TimeRange from './time-range';
 import ChartType from './chart-type';
 import { ToolTipComp } from '../ui/tooltip';
 import { BadgeInfo } from 'lucide-react';
-import SingleSelect from '../ui/single-select';
+// import SingleSelect from '../ui/single-select';
 // import MultiSelect from './multi-select';
 import { useTheme } from 'next-themes';
 import { TCountries } from '../../hooks/use-data';
@@ -141,10 +141,10 @@ const MainChartComp: React.FC<TMainChart> = ({
         </CardHeader>
 
         <Flex direction="column" gap="2" className="p-5 md:w-[300px]">
-        <SingleSelect
+        {/* <SingleSelect
           selectedCountry={selectedCountry}
           onCountryChange={handleCountryChange}
-        />
+        /> */}
           <TimeRange timeRange={timeRange} setTimeRange={setTimeRange} />
           <ChartType chartType={chartType} setChartType={setChartType} />
         </Flex>

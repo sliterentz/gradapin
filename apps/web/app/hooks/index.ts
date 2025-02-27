@@ -1,5 +1,5 @@
 import { getData } from '../libs/types';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import { useData, TCountries } from './use-data';
 import {
   formatChartData,
@@ -81,6 +81,7 @@ export const useCountryData = ({
     data: countryData,
     isPending,
     isFetching,
+    refetch,
   } = useQuery({
     queryKey: ['countryData', timeRange, indicator, dataSource],
     queryFn: () => fetchCountryData(timeRange),
@@ -88,7 +89,7 @@ export const useCountryData = ({
     placeholderData: (previousData) => previousData,
   });
 
-  const fetchSingleCountryData = async (name: string) => {
+  const fetchSingleCountryData = useCallback(async (name: string) => {
     try {
       if (!countryData?.length) return;
       if (countryData.find((d) => d.country === name)) return;
@@ -105,13 +106,16 @@ export const useCountryData = ({
 
       queryClient.setQueryData(
         ['countryData', timeRange, indicator, dataSource],
-        [...countryData, { country: name, data }]
+        (oldData: any) => [...(oldData || []), { country: name, data }]
       );
+
+      // Trigger a refetch to ensure the UI updates
+      refetch();
     } catch (error) {
       setIsNewCountryLoading(false);
       handleGlobalError(error);
     }
-  };
+  }, [countryData, timeRange, indicator, dataSource, queryClient, refetch]);
 
   const chartData = useMemo(() => {
     return formatChartData(countryData);

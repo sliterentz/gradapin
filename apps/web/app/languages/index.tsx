@@ -37,7 +37,7 @@ const Languages = ({ lang }: { lang: string }) => {
       data={LANGUAGES}
       placeholder="Select Language"
       classNames={{
-        trigger: 'w-[160px]',
+        trigger: 'w-[90px]',
       }}
       value={language}
       onChange={(e) => {
