@@ -11,6 +11,8 @@ import { TCountries } from '../../hooks/use-data';
 
 const Population = () => {
   const { dataSource } = useDataSource();
+  // const countryKey = dataSource === 'BPS API Data' ? 'bpsPopulationCountries' : 'populationCountries';
+
   const {
     isLoading,
     chartData,
@@ -27,7 +29,7 @@ const Population = () => {
     indicator: dataSource === 'BPS API Data' ? 'SP.POP.TOTL.BPS' : 'SP.POP.TOTL',
     countryKey: dataSource === 'BPS API Data' ? 'bpsPopulationCountries' : 'populationCountries',
     timeRangeKey: 'populationTimeRange',
-    initialCountries: [{ label: "Indonesia", value: dataSource === 'BPS API Data' ? "BPS_IDN" : "IDN" }],
+    initialCountries: [],
     dataSourceKey: dataSource,
   });
 
@@ -38,20 +40,23 @@ const Population = () => {
   const localCountries = useLocalCountries(dataSource === 'BPS API Data' ? 'bpsPopulationCountries' : 'populationCountries');
 
   const updateCountries = useCallback(() => {
-    // if (localCountries.length > 0) {
-      // setMultipleCountries(localCountries);
-    // } else {
-      setCountries(countries);
-    // }
+    if (localCountries.length > 0) {
+      setMultipleCountries(localCountries);
+    } else {
+      // setCountries(countries);
+    }
   }, [dataSource, setCountries, setMultipleCountries, localCountries]);
 
   useEffect(() => {
     updateCountries();
   }, [updateCountries]);
 
-  const handleSetCountries = useCallback((newCountry: TCountries) => {
-    const updatedCountries = [...countries, newCountry];
-    setMultipleCountries(updatedCountries);
+  // const handleSetCountries = useCallback((newCountry: TCountries) => {
+  //   setCountries(newCountry);
+  // }, [setCountries]);
+
+  const handleAddCountry = useCallback((newCountry: TCountries) => {
+    setMultipleCountries([...countries, newCountry]);
   }, [countries, setMultipleCountries]);
 
   // useEffect(() => {
@@ -71,7 +76,7 @@ const Population = () => {
       chartData={chartData}
       title={t('population')}
       toolTipMessage={t('populationDesc')}
-      setCountries={handleSetCountries}
+      setCountries={handleAddCountry}
       removeCountry={removeCountry}
       removeLastCountry={removeLastCountry}
       isCurrencySymbol={false}

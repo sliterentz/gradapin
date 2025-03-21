@@ -212,6 +212,44 @@ export const formatBPSChartData = (
 }
 
 export const formatChartData = (
+  // rawData:
+  //   | {
+  //       country: any;
+  //       data: TResponseData[];
+  //     }[]
+  //   | undefined
+  rawData: { country: any; data: TResponseData[] | TBPSResponseData[] }[] | undefined
+) => {
+  if (!rawData) return [];
+
+  const modifyData = rawData.map((d) => {
+    if (Array.isArray(d.data)) {
+      // Handle TResponseData[]
+      return d.data.map((dd) => ({
+        year: dd.date,
+        [dd.countryiso3code]: Number(dd.value),
+      }));
+    } else {
+      // Handle TBPSResponseData
+      return formatBPSChartData(d.data, d.country);
+    }
+  });
+
+  const data = [] as any[];
+  modifyData?.forEach((group) => {
+    group.forEach((item) => {
+      const existingItem = data.find((res) => res.year === item.year);
+      if (existingItem) {
+        Object.assign(existingItem, item);
+      } else {
+        data.push({ ...item });
+      }
+    });
+  });
+  return data;
+}; 
+
+export const formatChartDataTest = (
   rawData:
     | {
         country: string;

@@ -3,8 +3,10 @@
 import React from 'react';
 import SearchBar from './searchbar';
 import { useCountryData } from '../hooks';
+import { useDataSource } from '../contexts/DataSourceContext';
 
 const SearchBarWrapper = ({ lang }: { lang: string }) => {
+  const { dataSource } = useDataSource();
   const {
     countries,
     fetchSingleCountryData,
@@ -13,15 +15,20 @@ const SearchBarWrapper = ({ lang }: { lang: string }) => {
     removeLastCountry,
   } = useCountryData({
     indicator: 'SP.POP.TOTL',
-    countryKey: 'countries',
+    countryKey: 'populationCountries',
     timeRangeKey: 'timeRange',
-    dataSourceKey: 'dataSource',
+    dataSourceKey: dataSource,
   });
+
+  const handleNewCountryData = async (countryCode: string) => {
+    await fetchSingleCountryData(countryCode);
+    setCountries({ label: countryCode, value: countryCode });
+  };
 
   return (
     <SearchBar
       countries={countries}
-      fetchNewCountryData={fetchSingleCountryData}
+      fetchNewCountryData={handleNewCountryData}
       fetchSingleCountryData={fetchSingleCountryData}
       setCountries={setCountries}
       removeCountry={removeCountry}

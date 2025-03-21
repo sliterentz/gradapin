@@ -22,5 +22,8 @@ export type TBPSResponseData = {
   }>;
   datacontent: {
     [key: string]: number;
-  }
+  };
+  countryiso3code: string;
+  date: string;
+  value: number;
 }

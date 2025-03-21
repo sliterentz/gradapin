@@ -46,15 +46,29 @@ export const useData = ({
 
   const setCountries = useCallback((newCountry: TCountries) => {
     setCountriesState((prevCountries) => {
+      // Check if the country already exists
+      if (prevCountries.some(country => country.value === newCountry.value)) {
+        // If it exists, return the previous state without changes
+        return prevCountries;
+      }
+      // If it doesn't exist, add it to the array
       const updatedCountries = [...prevCountries, newCountry];
       setLocalStorage(countryKey, updatedCountries);
       return updatedCountries;
     });
-  }, []);
+  }, [countryKey]);
 
   const setMultipleCountries = useCallback((newCountries: TCountries[]) => {
-    setCountriesState(newCountries);
-  }, []);
+    setCountriesState((prevCountries) => {
+      // Filter out duplicates
+      const uniqueNewCountries = newCountries.filter(
+        newCountry => !prevCountries.some(prevCountry => prevCountry.value === newCountry.value)
+      );
+      const updatedCountries = [...prevCountries, ...uniqueNewCountries];
+      setLocalStorage(countryKey, updatedCountries);
+      return updatedCountries;
+    });
+  }, [countryKey]);
 
   const removeCountry = useCallback((value: string) => {
     setCountriesState((prevCountries) => {

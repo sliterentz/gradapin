@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -15,12 +15,15 @@ import ChartType from './chart-type';
 import { ToolTipComp } from '../ui/tooltip';
 import { BadgeInfo } from 'lucide-react';
 // import SingleSelect from '../ui/single-select';
-// import MultiSelect from './multi-select';
+// import MultiSelect from '../ui/multi-select';
+import SearchbarWrapper from '../../layouts/searchbar';
 import { useTheme } from 'next-themes';
+import { useLocale } from 'next-intl';
 import { TCountries } from '../../hooks/use-data';
 // import { useHotkeys } from 'react-hotkeys-hook';
 import ChartRenderer from './chart-renderer';
 import { Flex } from '@radix-ui/themes';
+// import Menubar from '../../layouts/menubar';
 
 export type TChart = 'area' | 'bar' | 'line' | 'radar';
 
@@ -41,6 +44,7 @@ type TMainChart = {
   indicator: string;
   type: string;
   isFetching: boolean;
+  // setMultipleCountries: (countries: TCountries[]) => void;
 };
 
 const MainChartComp: React.FC<TMainChart> = ({
@@ -60,16 +64,24 @@ const MainChartComp: React.FC<TMainChart> = ({
   indicator,
   isFetching,
   type,
+  // setMultipleCountries,
 }) => {
   const { theme } = useTheme();
+  const locale = useLocale();
   const [chartType, setChartType] = React.useState<TChart>('bar');
   const [selectedCountry, setSelectedCountry] = useState<string>('');
 
-  const handleCountryChange = (value: string) => {
-    setSelectedCountry(value);
-    setCountries({ value, label: value });
-    fetchSingleCountryData(value);
-  };
+  useEffect(() => {
+    // This effect will run whenever chartData changes
+    // You can add any additional logic here if needed
+  }, [chartData]);
+
+  const handleCountryChange = useCallback((name: string) => {
+    const newCountry = { label: name, value: name };
+    setCountries(newCountry);
+    // setMultipleCountries([...countries, newCountry]);
+    fetchSingleCountryData(name);  
+  }, [setCountries, fetchSingleCountryData]);
 
   const modifyConfig = useMemo(
     () =>
@@ -99,6 +111,7 @@ const MainChartComp: React.FC<TMainChart> = ({
       <Flex direction="column" gap="3">
         <Flex justify="between" align="start" wrap="wrap" gap="3">
         <CardHeader className="p-5">
+        {/* <Menubar /> */}
           <Flex direction="column" gap="2">
             <ToolTipComp name={toolTipMessage}>
               <CardTitle className="flex items-center gap-1 text-xl md:text-2xl">
@@ -124,7 +137,7 @@ const MainChartComp: React.FC<TMainChart> = ({
               {countries.map((country, idx) => (
                 <span
                   className="mr-2 flex items-center text-sm whitespace-nowrap"
-                  key={country.value}
+                  key={`${country.value}-${idx}`}
                 >
                   {country.label}
                   <span
@@ -145,6 +158,23 @@ const MainChartComp: React.FC<TMainChart> = ({
           selectedCountry={selectedCountry}
           onCountryChange={handleCountryChange}
         /> */}
+        {/* <MultiSelect
+            countries={countries}
+            fetchNewCountryData={handleCountryChange}
+            setCountries={setCountries}
+            removeCountry={removeCountry}
+            removeLastCountry={removeLastCountry}
+            lang={locale}
+          /> */}
+          <SearchbarWrapper
+            countries={countries}
+            fetchNewCountryData={fetchSingleCountryData}
+            fetchSingleCountryData={fetchSingleCountryData}
+            setCountries={setCountries}
+            removeCountry={removeCountry}
+            removeLastCountry={removeLastCountry}
+            lang={locale}
+          />
           <TimeRange timeRange={timeRange} setTimeRange={setTimeRange} />
           <ChartType chartType={chartType} setChartType={setChartType} />
         </Flex>
@@ -153,6 +183,7 @@ const MainChartComp: React.FC<TMainChart> = ({
       <CardContent className="h-[500px] w-[97vw] rounded-xl px-0 py-4 md:p-4">
       {chartData.length > 0 ? (
         <ChartRenderer
+          key={JSON.stringify(countries)}
           chartType={chartType}
           chartData={chartData}
           icon={icon}

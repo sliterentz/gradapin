@@ -26,7 +26,7 @@ type TMultiSelect = {
   setCountries: (countries: TCountries) => void;
   removeCountry: (name: string) => void;
   removeLastCountry: () => void;
-  onCountryChange: (value: string) => void;
+  // onCountryChange: (value: string) => void;
   lang: string;
 };
 
@@ -38,7 +38,7 @@ const SearchBar: React.FC<TMultiSelect> = ({
   setCountries,
   removeCountry,
   removeLastCountry,
-  onCountryChange,
+  // onCountryChange,
   lang,
 }) => {
   const [allCountries, setAllCountries] = useState<Country[]>([]);
@@ -94,6 +94,13 @@ const SearchBar: React.FC<TMultiSelect> = ({
     }
   }, [dataSource, allCountries]);
 
+  // useEffect(() => {
+  //   if (countries.length > 0) {
+  //     const lastCountry = countries[countries.length - 1];
+  //     fetchSingleCountryData(lastCountry.value);
+  //   }
+  // }, [countries, fetchSingleCountryData]);
+
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
 
@@ -128,7 +135,7 @@ const SearchBar: React.FC<TMultiSelect> = ({
                       className="w-full h-full text-left px-2 py-1.5"
                       onClick={() => {
                         setSelectedCountry(country.name);
-                        setCountries({ value: country.iso3, label: country.name });
+                        setCountries({ label: country.name, value: country.iso3 });
                         fetchNewCountryData(country.iso3);
                         setInputValue('');
                         setIsOpen(false);
