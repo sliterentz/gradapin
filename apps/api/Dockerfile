@@ -45,7 +45,7 @@ COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
 
 # Copy the .env file to the production stage
-COPY .env .env
+COPY .env.example .env
 
 # Change ownership to the non-root user
 RUN chown -R appuser:appgroup .
