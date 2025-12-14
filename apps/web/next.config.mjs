@@ -1,8 +1,9 @@
 import createNextIntlPlugin from 'next-intl/plugin';
-const withNextIntl = createNextIntlPlugin();
+const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  transpilePackages: ["@repo/ui"],
   reactStrictMode: true,
   typescript: {
     ignoreBuildErrors: true,
@@ -10,9 +11,9 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  experimental: {
+  // experimental: {
     // reactCompiler: true,
-  },
+  // },
 };
 
 export default withNextIntl(nextConfig);
