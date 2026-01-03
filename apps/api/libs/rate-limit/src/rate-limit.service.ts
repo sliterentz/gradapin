@@ -1,30 +1,32 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Redis } from '@upstash/redis';
-import { Ratelimit } from '@upstash/ratelimit';
+import { ThrottlerStorage, getStorageToken } from '@nestjs/throttler';
 
 @Injectable()
 export class RateLimitService {
-  private rateLimiter: Ratelimit;
-
-  constructor(private configService: ConfigService) {
-    const redis = new Redis({
-      url: this.configService.get<string>('UPSTASH_REDIS_REST_URL'),
-      token: this.configService.get<string>('UPSTASH_REDIS_REST_TOKEN'),
-    });
-
-    this.rateLimiter = new Ratelimit({
-      redis,
-      limiter: Ratelimit.slidingWindow(
-        this.configService.get<number>('RATE_LIMIT_MAX_REQUESTS', 10),
-        `${this.configService.get<number>('RATE_LIMIT_WINDOW', 60)} s`
-      ),
-      analytics: true,
-      prefix: 'api_ratelimit',
-    });
-  }
+  constructor(
+    private configService: ConfigService,
+    @Inject(getStorageToken())
+    private storage: ThrottlerStorage,
+  ) {}
 
   async limit(identifier: string) {
-    return this.rateLimiter.limit(identifier);
+    const ttl = this.configService.get<number>('RATE_LIMIT_TTL', 60);
+    const limit = this.configService.get<number>('RATE_LIMIT_MAX_REQUESTS', 10);
+    const blockDuration = this.configService.get<number>('RATE_LIMIT_BLOCK_DURATION', 0);
+
+    const record = await this.storage.increment(
+      identifier,
+      ttl,
+      limit,
+      blockDuration,
+      'api_ratelimit',
+    );
+
+    const success = !record.isBlocked && record.totalHits <= limit;
+    const remaining = Math.max(limit - record.totalHits, 0);
+    const reset = record.isBlocked ? record.timeToBlockExpire : record.timeToExpire;
+
+    return { success, remaining, reset };
   }
 }
