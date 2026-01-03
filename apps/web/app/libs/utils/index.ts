@@ -151,7 +151,7 @@ export const commonMetaData = ({
     keywords: [
       'arief luqman hakim',
       'country graph',
-      'population graph',,
+      'population graph',
       ...keywords,
     ],
   };
@@ -178,35 +178,40 @@ export const formatBPSChartData = (
   countryCode: string
 ) => {
   // Create an array of years from the 'tahun' property
-  const yearMap = new Map(rawData.tahun.map(year => [year.val, year.label]));
-  const yearsLabel = rawData.tahun.map(year => year.label.toString());
+  const yearMap = new Map(rawData.tahun.map(year => [String(year.val), year.label]));
+  // const yearsLabel = rawData.tahun.map(year => year.label.toString());
 
   // Create a map of year to value from datacontent
-  const dataMap = new Map(
+  const dataMap = new Map<string, number>(
     Object.entries(rawData.datacontent).map(([key, value]) => {
-      const yearVal = parseInt(key.slice(-4, -1));
+      const yearVal = parseInt(key.slice(-4));
       // const key = Object.keys(rawData.datacontent)[index];
       // const value = rawData.datacontent[key];
-      const yearLabel = yearMap.get(yearVal);
+      const yearLabel = yearMap.get(String(yearVal)); // Convert yearVal to string
+      const parsedValue = Number(value) || 0;
+
       if (!yearLabel) {
         console.warn(`No matching label found for year value: ${yearVal}`);
-        return [key, parseInt(value)]; // fallback to original key if no match
+        return [String(yearVal), parsedValue]; // fallback to original key if no match
       }
-      return [yearLabel, parseInt(value)];
+      return [yearLabel, parsedValue] as [string, number];
     })
   );
 
   // Map and sort the dataMap by year to ensure correct order into an array format
-  const dataArray = Array.from(dataMap)
-  .sort((a, b) => parseInt(b[0]) - parseInt(a[0]));
-
-  const years = Array.from(dataArray);
+  const dataArray = Array.from(dataMap.entries())
+    .sort((a, b) => {
+      // Perbaikan: Pastikan sorting bekerja dengan benar
+      const yearA = parseInt(a[0]);
+      const yearB = parseInt(b[0]);
+      return yearB - yearA; // Descending order
+    });
 
   // Create the final formatted data
-  return years.map(([year, value]) => {
+  return dataArray.map(([year, value]) => {
     return {
       year: year,
-      [countryCode]: Number(value),
+      [countryCode]: value,
     };
   });
 }
@@ -221,7 +226,7 @@ export const formatChartData = (
 ) => {
   if (!rawData) return [];
 
-  const yearDataMap = new Map<string, { [key: string]: number }>();
+  const yearDataMap = new Map<string, Record<string, string | number>>();
 
   rawData.forEach((countryData) => {
     if (Array.isArray(countryData.data)) {
