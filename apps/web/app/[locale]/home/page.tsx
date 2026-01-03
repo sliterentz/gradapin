@@ -1,15 +1,15 @@
-'use client';
-
 import React from 'react';
 import { Flex } from '@radix-ui/themes';
 // import Link from 'next/link';
-import Population from '../layouts/population';
+import Population from '../../components/layouts/population';
+
+export const dynamic = 'force-dynamic';
 
 const Home = async () => {
   return (
     <Flex gap="3" direction="column">
       <Flex direction="column" gap="3" className="md:flex-row md:flex-wrap items-center">
-        <Population />
+        <Population  />
       </Flex>
     </Flex>
   );

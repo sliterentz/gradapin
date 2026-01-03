@@ -1,69 +1,37 @@
-import type { Metadata } from "next";
+import type { ReactNode } from 'react';
 import { Inter } from 'next/font/google';
-import "./globals.css";
-import "@radix-ui/themes/styles.css";
-import { Theme, Box, Container } from '@radix-ui/themes';
-import ThemeProvider from './libs/providers/theme-provider';
-import Header from './layouts/header';
-import Footer from './layouts/footer';
 import { NextIntlClientProvider } from 'next-intl';
-import { getLocale, getMessages } from 'next-intl/server';
-import NextTopLoader from 'nextjs-toploader';
-import { Toaster } from 'sonner';
-import ToastProvider from './libs/providers/toast-provider';
-import ReactQueryProvider from './libs/providers/reactQuery-provider';
-import { NuqsAdapter } from 'nuqs/adapters/next/app';
-import { DataSourceProvider } from './contexts/DataSourceContext';
-import Menubar from "./layouts/menubar";
+import { cookies } from 'next/headers';
+import { locales, defaultLocale } from '@/i18n/config';
+import ThemeProvider from '@/app/libs/providers/theme-provider';
+import ReactQueryProvider from '@/app/libs/providers/reactQuery-provider';
+import ToastProvider from '@/app/libs/providers/toast-provider';
+import { DataSourceProvider } from '@/app/contexts/DataSourceContext';
+import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
 
-export const metadata: Metadata = {
-  title: "Gradapin",
-  description: "Graphical Indonesia Data",
-  keywords: ["gradapin", "indonesia population", "arief luqman hakim", "word bank data"],
+type Props = {
+  children: ReactNode;
 };
 
-const RootLayout = async ({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) => {
-  const locale = await getLocale();
-  const messages = await getMessages();
+export default async function RootLayout({ children }: Props) {
+  const Cookies = await cookies();
+  let locale = Cookies.get('lang')?.value ?? defaultLocale;
+  if (!locales.includes(locale as any)) {
+    locale = defaultLocale;
+  }
+  const messages = (await import(`@/messages/${locale}.json`)).default;
 
   return (
     <html lang={locale} suppressHydrationWarning>
       <body className={inter.className}>
-        <NextIntlClientProvider messages={messages}>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="dark"
-            enableSystem
-            disableTransitionOnChange
-          >
+        <NextIntlClientProvider locale={locale} messages={messages} timeZone="Asia/Jakarta" now={new Date()}>
+          <ThemeProvider attribute="class" defaultTheme="dark">
             <ReactQueryProvider>
               <DataSourceProvider>
-              <NextTopLoader
-                color="#22dd4e"
-                initialPosition={0.08}
-                crawlSpeed={200}
-                height={3}
-                crawl={true}
-                showSpinner={false}
-                easing="ease"
-                speed={200}
-                shadow="0 0 10px #22DD4e,0 0 5px #22DD4e"
-              />
-                <Box className="min-h-[100dvh] flex flex-col">
-                  <Header />
-                  <Menubar />
-                  <Container size="4" className="flex-grow">
-                  <NuqsAdapter>{children}</NuqsAdapter>
-                  </Container>
-                  <ToastProvider />
-                  <Footer />
-                </Box>
+                {children}
+                <ToastProvider />
               </DataSourceProvider>
             </ReactQueryProvider>
           </ThemeProvider>
@@ -72,5 +40,3 @@ const RootLayout = async ({
     </html>
   );
 }
-
-export default RootLayout;
